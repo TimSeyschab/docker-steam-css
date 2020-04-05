@@ -1,19 +1,20 @@
-FROM ubuntu:xenial
+FROM ubuntu:latest
 
-RUN apt-get update && \
-    apt-get install -y wget lib32gcc1 lib32tinfo5 unzip nginx
+RUN apt-get update && apt-get \
+    install -y wget lib32gcc1 lib32tinfo5
 
 RUN useradd -ms /bin/bash steam
+
 WORKDIR /home/steam
 
 USER steam
 
 RUN wget -O /tmp/steamcmd_linux.tar.gz http://media.steampowered.com/installer/steamcmd_linux.tar.gz && \
-    tar -xvzf /tmp/steamcmd_linux.tar.gz && \
-    rm /tmp/steamcmd_linux.tar.gz
+  tar -xvzf /tmp/steamcmd_linux.tar.gz && \
+  rm /tmp/steamcmd_linux.tar.gz
 
 # Install CSS once to speed up container startup
-RUN ./steamcmd.sh +login anonymous +force_install_dir ./css +app_update 232330 validate +quit # Update to date as of 2016-02-06
+RUN ./steamcmd.sh +login anonymous +force_install_dir ./css +app_update 232330 validate +quit
 
 ENV CSS_HOSTNAME Counter-Strike Source Dedicated Server
 ENV CSS_PASSWORD ""
@@ -33,16 +34,18 @@ ADD ./entrypoint.sh entrypoint.sh
 RUN ln -s /home/steam/linux32/ /home/steam/.steam/sdk32
 
 # Add Source Mods
-COPY --chown=steam:steam mods/ /temp
-RUN cd /home/steam/css/cstrike && \
-    tar zxvf /temp/mmsource-1.10.6-linux.tar.gz && \
-    tar zxvf /temp/sourcemod-1.7.3-git5275-linux.tar.gz && \
-    unzip /temp/quake_sounds1.8.zip && \
-    unzip /temp/mapchooser_extended_1.10.2.zip && \
-    mv /temp/gem_damage_report.smx addons/sourcemod/plugins && \
-    rm /temp/*
+COPY --chown=steam:steam mods/ /tempmods
+COPY --chown=steam:steam maps/ /tempmaps
 
-# Add default configuration files
-ADD cfg/ /home/steam/css/cstrike/cfg
+RUN cd /home/steam/css/cstrike && \
+  tar zxvf /tempmods/mmsource.tar.gz && \
+  tar zxvf /tempmods/sourcemod.tar.gz && \
+  tar zxvf /tempmods/rankme.tar.gz && \
+  mv /tempmods/gem_damage_report.smx addons/sourcemod/plugins && \
+  rm /tempmods/*
+
+RUN cd /home/steam/css/cstrike && \
+  tar zxvf /tempmaps/unofficial-maps.tar.gz && \
+  rm /tempmaps/*
 
 CMD ./entrypoint.sh
