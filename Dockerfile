@@ -1,7 +1,7 @@
-FROM ubuntu:eoan
+FROM ubuntu:bionic
 
 RUN apt-get update && apt-get \
-    install -y wget lib32gcc1 libtinfo5
+    install -y wget lib32gcc1 lib32tinfo5
 
 RUN useradd -ms /bin/bash steam
 
