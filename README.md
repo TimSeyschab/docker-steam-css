@@ -29,6 +29,7 @@ List of Added Plugins:
 - [SourceMod v1.10.0-6460](http://www.sourcemod.net/downloads.php?branch=stable)
   - With MapChooser, RockTheVote, and Nominations enabled
 - [RankMe v2.8.3](https://forums.alliedmods.net/showthread.php?p=1456869)
+- [Zombie:Reloaded](https://forums.alliedmods.net/showthread.php?t=205567)
 - Damage Report
 
 List of Unofficial Maps:
